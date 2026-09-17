@@ -1,374 +1,495 @@
-const margin = {
-    top: 30,
-    right: 30,
-    bottom: 70,
-    left: 80
-};
+//Load the health expenditure data first
+//Convert year and expenditure to numbers as each row comes in
+d3.csv("health_expenditure.csv", function(d) {
+    return {
+        country: d.country,
+        year: +d.year,
+        expenditure: +d.expenditure_musd
+    };
+}).then(function(expData) {
 
-const width = 750 - margin.left - margin.right;
-const height = 500 - margin.top - margin.bottom;
-
-// Scatterplot SVG
-const svg = d3
-    .select("#scatterplot")
-    .append("svg")
-    .attr(
-        "viewBox",
-        `0 0 ${width + margin.left + margin.right}
-        ${height + margin.top + margin.bottom}`
-    )
-    .append("g")
-    .attr(
-        "transform",
-        `translate(${margin.left}, ${margin.top})`
-    );
-
-// Tooltip
-const tooltip = d3.select("#tooltip");
-
-// Load data
-d3.csv("data/health_data.csv").then(data => {
-
-    // Convert strings to numbers
-    data.forEach(d => {
-        d.year = +d.year;
-        d.life_expectancy = +d.life_expectancy;
-        d.health_expenditure = +d.health_expenditure;
-    });
-
-    // Get unique years
-    const years = [...new Set(data.map(d => d.year))]
-        .sort((a, b) => a - b);
-
-    // Get unique countries
-    const countries = [...new Set(data.map(d => d.country))]
-        .sort();
-
-    // Populate year dropdown
-    d3.select("#year-select")
-        .selectAll("option")
-        .data(years)
-        .join("option")
-        .attr("value", d => d)
-        .text(d => d);
-
-    // Default to latest year
-    const latestYear = d3.max(years);
-
-    d3.select("#year-select")
-        .property("value", latestYear);
-
-    // Populate country dropdown
-    d3.select("#country-select")
-        .selectAll("option.country")
-        .data(countries)
-        .join("option")
-        .attr("class", "country")
-        .attr("value", d => d)
-        .text(d => d);
-
-    // Scales
-    const xScale = d3.scaleLinear()
-        .domain([
-            0,
-            d3.max(data, d => d.health_expenditure)
-        ])
-        .nice()
-        .range([0, width]);
-
-    const yScale = d3.scaleLinear()
-        .domain([
-            d3.min(data, d => d.life_expectancy) - 1,
-            d3.max(data, d => d.life_expectancy) + 1
-        ])
-        .nice()
-        .range([height, 0]);
-
-    // X axis
-    svg.append("g")
-        .attr(
-            "transform",
-            `translate(0, ${height})`
-        )
-        .call(
-            d3.axisBottom(xScale)
-                .tickFormat(d => `$${d3.format(",")(d)}`)
-        );
-
-    // Y axis
-    svg.append("g")
-        .call(d3.axisLeft(yScale));
-
-    // X axis label
-    svg.append("text")
-        .attr("class", "axis-label")
-        .attr("x", width / 2)
-        .attr("y", height + 55)
-        .attr("text-anchor", "middle")
-        .text("Health expenditure per capita");
-
-    // Y axis label
-    svg.append("text")
-        .attr("class", "axis-label")
-        .attr(
-            "transform",
-            "rotate(-90)"
-        )
-        .attr("x", -height / 2)
-        .attr("y", -55)
-        .attr("text-anchor", "middle")
-        .text("Life expectancy at birth (years)");
-
-    function updateScatterplot(year) {
-
-        const filteredData = data.filter(
-            d => d.year === +year
-        );
-
-        svg.selectAll(".dot")
-            .data(
-                filteredData,
-                d => d.country
-            )
-            .join(
-
-                enter => enter
-                    .append("circle")
-                    .attr("class", "dot")
-                    .attr("cx", d =>
-                        xScale(d.health_expenditure)
-                    )
-                    .attr("cy", d =>
-                        yScale(d.life_expectancy)
-                    )
-                    .attr("r", 6)
-                    .on("mouseover", function(event, d) {
-
-                        tooltip
-                            .style("visibility", "visible")
-                            .html(`
-                                <strong>${d.country}</strong><br>
-                                Year: ${d.year}<br>
-                                Life expectancy:
-                                ${d.life_expectancy} years<br>
-                                Health expenditure:
-                                $${d3.format(",.0f")(
-                                    d.health_expenditure
-                                )}
-                            `);
-
-                    })
-                    .on("mousemove", function(event) {
-
-                        tooltip
-                            .style(
-                                "left",
-                                `${event.pageX + 15}px`
-                            )
-                            .style(
-                                "top",
-                                `${event.pageY + 15}px`
-                            );
-
-                    })
-                    .on("mouseout", function() {
-
-                        tooltip
-                            .style(
-                                "visibility",
-                                "hidden"
-                            );
-
-                    })
-                    .on("click", function(event, d) {
-
-                        selectCountry(d.country, d.year);
-
-                    }),
-
-                update => update
-                    .transition()
-                    .duration(500)
-                    .attr("cx", d =>
-                        xScale(d.health_expenditure)
-                    )
-                    .attr("cy", d =>
-                        yScale(d.life_expectancy)
-                    ),
-
-                exit => exit.remove()
-
-            );
-    }
-
-    function selectCountry(country, year) {
-
-        const selected = data.find(
-            d =>
-                d.country === country &&
-                d.year === +year
-        );
-
-        if (!selected) return;
-
-        d3.select("#country-name")
-            .text(selected.country);
-
-        d3.select("#life-value")
-            .text(
-                `${selected.life_expectancy} years`
-            );
-
-        d3.select("#spending-value")
-            .text(
-                `$${d3.format(",.0f")(
-                    selected.health_expenditure
-                )} per person`
-            );
-
-        d3.select("#country-select")
-            .property("value", country);
-
-        drawLineChart(country);
-    }
-
-    // Year dropdown
-    d3.select("#year-select")
-        .on("change", function() {
-
-            const selectedYear = +this.value;
-
-            updateScatterplot(selectedYear);
-
-        });
-
-    // Country dropdown
-    d3.select("#country-select")
-        .on("change", function() {
-
-            if (this.value === "All") return;
-
-            const selectedYear =
-                +d3.select("#year-select")
-                    .property("value");
-
-            selectCountry(
-                this.value,
-                selectedYear
-            );
-
-        });
-
-    updateScatterplot(latestYear);
-
-    function drawLineChart(country) {
-
-        const countryData = data
-            .filter(d => d.country === country)
-            .sort((a, b) => a.year - b.year);
-
-        d3.select("#linechart")
-            .selectAll("*")
-            .remove();
-
-        const lineWidth = 1000;
-        const lineHeight = 350;
-
-        const lineMargin = {
-            top: 30,
-            right: 40,
-            bottom: 50,
-            left: 70
+    //Now load the life expectancy data
+    //Convert year and life expectancy to numbers as each row comes in
+    d3.csv("life_expectancy.csv", function(d) {
+        return {
+            country: d.country,
+            year: +d.year,
+            life: +d.life_expectancy
         };
+    }).then(function(lifeData) {
 
-        const innerWidth =
-            lineWidth -
-            lineMargin.left -
-            lineMargin.right;
+        //Merge the two datasets together by country and year
+        //Loop through life expectancy, and for each row look for a
+        //matching row in the expenditure data (same country, same year)
+        var merged = [];
 
-        const innerHeight =
-            lineHeight -
-            lineMargin.top -
-            lineMargin.bottom;
+        for (var i = 0; i < lifeData.length; i++) {
+            for (var j = 0; j < expData.length; j++) {
 
-        const lineSvg = d3
-            .select("#linechart")
-            .append("svg")
-            .attr(
-                "viewBox",
-                `0 0 ${lineWidth} ${lineHeight}`
-            )
-            .append("g")
-            .attr(
-                "transform",
-                `translate(
-                    ${lineMargin.left},
-                    ${lineMargin.top}
-                )`
-            );
+                if (lifeData[i].country === expData[j].country && lifeData[i].year === expData[j].year) {
 
-        const x = d3.scaleLinear()
-            .domain(d3.extent(
-                countryData,
-                d => d.year
-            ))
-            .range([0, innerWidth]);
+                    merged.push({
+                        country: lifeData[i].country,
+                        year: lifeData[i].year,
+                        life: lifeData[i].life,
+                        expenditure: expData[j].expenditure
+                    });
 
-        const y = d3.scaleLinear()
-            .domain([
-                d3.min(
-                    countryData,
-                    d => d.life_expectancy
-                ) - 1,
+                    //Stop looking once we find the matching row
+                    break;
+                }
+            }
+        }
 
-                d3.max(
-                    countryData,
-                    d => d.life_expectancy
-                ) + 1
-            ])
-            .range([
-                innerHeight,
-                0
-            ]);
+        //Build a list of unique countries (no repeats)
+        var countries = [];
+        for (var i = 0; i < merged.length; i++) {
+            if (countries.indexOf(merged[i].country) === -1) {
+                countries.push(merged[i].country);
+            }
+        }
+        countries.sort();
 
-        lineSvg
-            .append("g")
-            .attr(
-                "transform",
-                `translate(0, ${innerHeight})`
-            )
-            .call(
-                d3.axisBottom(x)
-                    .tickFormat(d3.format("d"))
-            );
+        //Build a list of unique years (no repeats)
+        var years = [];
+        for (var i = 0; i < merged.length; i++) {
+            if (years.indexOf(merged[i].year) === -1) {
+                years.push(merged[i].year);
+            }
+        }
+        years.sort(function(a, b) {
+            return a - b;
+        });
 
-        lineSvg
-            .append("g")
-            .call(d3.axisLeft(y));
+        //Work out the most recent year that has data for every country
+        //(the newest year is often missing a few countries)
+        var defaultYear = years[years.length - 1];
 
-        const line = d3.line()
-            .x(d => x(d.year))
-            .y(d => y(d.life_expectancy));
+        for (var i = years.length - 1; i >= 0; i--) {
 
-        lineSvg
-            .append("path")
-            .datum(countryData)
-            .attr("fill", "none")
-            .attr("stroke", "currentColor")
-            .attr("stroke-width", 2)
-            .attr("d", line);
+            var count = 0;
+            for (var j = 0; j < merged.length; j++) {
+                if (merged[j].year === years[i]) {
+                    count = count + 1;
+                }
+            }
 
-        lineSvg
-            .selectAll(".trend-point")
-            .data(countryData)
-            .join("circle")
-            .attr("class", "trend-point")
-            .attr("cx", d => x(d.year))
-            .attr(
-                "cy",
-                d => y(d.life_expectancy)
-            )
-            .attr("r", 4);
-    }
+            if (count === countries.length) {
+                defaultYear = years[i];
+                break;
+            }
+        }
+
+        //Fill in the year dropdown
+        d3.select("#year-select")
+            .selectAll("option")
+            .data(years)
+            .enter()
+            .append("option")
+            .attr("value", function(d) {
+                return d;
+            })
+            .text(function(d) {
+                return d;
+            });
+
+        //Fill in the country dropdown
+        //("All countries" option already exists in the HTML)
+        d3.select("#country-select")
+            .selectAll("option.country-option")
+            .data(countries)
+            .enter()
+            .append("option")
+            .attr("class", "country-option")
+            .attr("value", function(d) {
+                return d;
+            })
+            .text(function(d) {
+                return d;
+            });
+
+        //Set the year dropdown to our default year
+        d3.select("#year-select").property("value", defaultYear);
+
+        //Starting message before a country has been picked
+        d3.select("#linechart").html("<p>Select a country above to see its trend over time.</p>");
+
+        //Draw the scatterplot for the first time
+        drawScatterplot(defaultYear);
+
+        //Year dropdown changed
+        d3.select("#year-select")
+            .on("change", function() {
+
+                var year = +this.value;
+                drawScatterplot(year);
+
+                var country = d3.select("#country-select").property("value");
+                if (country !== "All") {
+                    updateInfoCard(country, year);
+                }
+            });
+
+        //Country dropdown changed
+        d3.select("#country-select")
+            .on("change", function() {
+                selectCountry(this.value);
+            });
+
+        //Used by both the dropdown and clicking a dot on the scatterplot
+        function selectCountry(country) {
+
+            //Keep the dropdown in sync in case this was called from a click
+            d3.select("#country-select").property("value", country);
+
+            var year = +d3.select("#year-select").property("value");
+
+            if (country === "All") {
+                d3.select("#country-name").text("Select a country");
+                d3.select("#life-value").text("—");
+                d3.select("#spending-value").text("—");
+                d3.select("#linechart").html("<p>Select a country above to see its trend over time.</p>");
+            }
+            else {
+                updateInfoCard(country, year);
+                drawLineChart(country);
+            }
+
+            //Redraw so the selected dot gets highlighted
+            drawScatterplot(year);
+        }
+
+        //Update the info card on the right of the scatterplot
+        function updateInfoCard(country, year) {
+
+            var record = null;
+
+            for (var i = 0; i < merged.length; i++) {
+                if (merged[i].country === country && merged[i].year === year) {
+                    record = merged[i];
+                    break;
+                }
+            }
+
+            d3.select("#country-name").text(country);
+
+            if (record) {
+                d3.select("#life-value").text(record.life + " years");
+                d3.select("#spending-value").text(formatMoney(record.expenditure));
+            }
+            else {
+                d3.select("#life-value").text("No data for " + year);
+                d3.select("#spending-value").text("No data for " + year);
+            }
+        }
+
+        //Turns a value in millions of USD into a readable $ amount
+        //e.g. 743538.8 -> "$744B"
+        function formatMoney(musd) {
+
+            var usd = musd * 1000000;
+
+            if (usd >= 1000000000000) {
+                return "$" + (usd / 1000000000000).toFixed(1) + "T";
+            }
+            if (usd >= 1000000000) {
+                return "$" + (usd / 1000000000).toFixed(0) + "B";
+            }
+            return "$" + (usd / 1000000).toFixed(0) + "M";
+        }
+
+        //-------------------------------------------------
+        //Scatterplot: health expenditure (x) vs life expectancy (y)
+        //-------------------------------------------------
+        function drawScatterplot(year) {
+
+            //Clear whatever was drawn before
+            d3.select("#scatterplot").html("");
+
+            //Only keep the rows for the selected year
+            var data = [];
+            for (var i = 0; i < merged.length; i++) {
+                if (merged[i].year === year) {
+                    data.push(merged[i]);
+                }
+            }
+
+            var selectedCountry = d3.select("#country-select").property("value");
+
+            //Width and height of SVG canvas
+            var w = 600;
+            var h = 400;
+            var padding = 60;
+
+            var svg = d3.select("#scatterplot")
+                .append("svg")
+                .attr("viewBox", "0 0 " + w + " " + h);
+
+            //Work out the min/max across ALL years, not just this year,
+            //so the axis doesn't jump around when the year is changed
+            var expMin = d3.min(merged, function(d) { return d.expenditure; });
+            var expMax = d3.max(merged, function(d) { return d.expenditure; });
+            var lifeMin = d3.min(merged, function(d) { return d.life; });
+            var lifeMax = d3.max(merged, function(d) { return d.life; });
+
+            //Log scale for expenditure — total spending ranges from about
+            //$18 billion up to $5.4 trillion across these countries, mostly
+            //because of population size rather than health spending itself.
+            //A normal (linear) scale would squash every country except the
+            //US into the very left edge of the chart.
+            var xScale = d3.scaleLog()
+                .domain([expMin, expMax])
+                .range([padding, w - padding]);
+
+            var yScale = d3.scaleLinear()
+                .domain([lifeMin, lifeMax])
+                .range([h - padding, padding]);
+
+            //Create a bottom x-axis, formatting the tick labels using formatMoney
+            var xAxis = d3.axisBottom(xScale)
+                .ticks(5)
+                .tickFormat(function(d) {
+                    return formatMoney(d);
+                });
+
+            //Create a left y-axis
+            var yAxis = d3.axisLeft(yScale);
+
+            //Add the x-axis to the SVG
+            svg.append("g")
+                .attr("transform", "translate(0," + (h - padding) + ")")
+                .call(xAxis);
+
+            //Add the y-axis to the SVG
+            svg.append("g")
+                .attr("transform", "translate(" + padding + ",0)")
+                .call(yAxis);
+
+            //Axis titles
+            svg.append("text")
+                .attr("x", w / 2)
+                .attr("y", h - 15)
+                .attr("text-anchor", "middle")
+                .attr("font-size", "12px")
+                .text("Health expenditure, total (log scale)");
+
+            svg.append("text")
+                .attr("x", padding)
+                .attr("y", padding - 15)
+                .attr("font-size", "12px")
+                .text("Life expectancy (years)");
+
+            //Where the tooltip div lives (defined in index.html)
+            var tooltip = d3.select("#tooltip");
+
+            //Draw one circle for each country
+            svg.selectAll("circle")
+                .data(data)
+                .enter()
+                .append("circle")
+                .attr("class", "dot")
+                .attr("cx", function(d) {
+                    return xScale(d.expenditure);
+                })
+                .attr("cy", function(d) {
+                    return yScale(d.life);
+                })
+                .attr("r", function(d) {
+                    if (d.country === selectedCountry) {
+                        return 8;
+                    }
+                    return 5;
+                })
+                .attr("fill", function(d) {
+                    if (d.country === selectedCountry) {
+                        return "#d62728";
+                    }
+                    return "#4682b4";
+                })
+
+                //Grow the dot slightly and show the tooltip
+                .on("mouseover", function(event, d) {
+
+                    d3.select(this)
+                        .transition()
+                        .duration(200)
+                        .attr("r", 9);
+
+                    tooltip.style("visibility", "visible")
+                        .html(
+                            "<strong>" + d.country + "</strong><br>" +
+                            "Life expectancy: " + d.life + " years<br>" +
+                            "Health spend: " + formatMoney(d.expenditure)
+                        );
+                })
+
+                //Follow the mouse
+                .on("mousemove", function(event) {
+                    tooltip.style("top", (event.pageY + 12) + "px")
+                        .style("left", (event.pageX + 12) + "px");
+                })
+
+                //Shrink the dot back down and hide the tooltip
+                .on("mouseout", function(event, d) {
+
+                    var backToRadius = 5;
+                    if (d.country === selectedCountry) {
+                        backToRadius = 8;
+                    }
+
+                    d3.select(this)
+                        .transition()
+                        .duration(200)
+                        .attr("r", backToRadius);
+
+                    tooltip.style("visibility", "hidden");
+                })
+
+                //Clicking a dot selects that country
+                .on("click", function(event, d) {
+                    selectCountry(d.country);
+                });
+        }
+
+        //-------------------------------------------------
+        //Line chart: selected country's trend over time
+        //Life expectancy uses the left axis (full 2000-2025 history)
+        //Health expenditure uses the right axis (2017-2025 only)
+        //-------------------------------------------------
+        function drawLineChart(country) {
+
+            d3.select("#linechart").html("");
+
+            //Pull out just this country's rows from each dataset
+            var lifeSeries = [];
+            for (var i = 0; i < lifeData.length; i++) {
+                if (lifeData[i].country === country) {
+                    lifeSeries.push(lifeData[i]);
+                }
+            }
+            lifeSeries.sort(function(a, b) {
+                return a.year - b.year;
+            });
+
+            var expSeries = [];
+            for (var i = 0; i < expData.length; i++) {
+                if (expData[i].country === country) {
+                    expSeries.push(expData[i]);
+                }
+            }
+            expSeries.sort(function(a, b) {
+                return a.year - b.year;
+            });
+
+            //Width and height of SVG canvas
+            var w = 1000;
+            var h = 350;
+            var padding = 65;
+
+            var svg = d3.select("#linechart")
+                .append("svg")
+                .attr("viewBox", "0 0 " + w + " " + h);
+
+            //x-axis covers the full range of years in the life expectancy data
+            var yearMin = d3.min(lifeSeries, function(d) { return d.year; });
+            var yearMax = d3.max(lifeSeries, function(d) { return d.year; });
+
+            var xScale = d3.scaleLinear()
+                .domain([yearMin, yearMax])
+                .range([padding, w - padding]);
+
+            //Left y-axis: life expectancy
+            var lifeMin = d3.min(lifeSeries, function(d) { return d.life; });
+            var lifeMax = d3.max(lifeSeries, function(d) { return d.life; });
+
+            var yScaleLife = d3.scaleLinear()
+                .domain([lifeMin, lifeMax])
+                .range([h - padding, padding]);
+
+            //Right y-axis: health expenditure
+            var expMax = d3.max(expSeries, function(d) { return d.expenditure; });
+
+            var yScaleExp = d3.scaleLinear()
+                .domain([0, expMax])
+                .range([h - padding, padding]);
+
+            //Line generator for life expectancy
+            var lifeLine = d3.line()
+                .x(function(d) { return xScale(d.year); })
+                .y(function(d) { return yScaleLife(d.life); });
+
+            //Line generator for health expenditure
+            var expLine = d3.line()
+                .x(function(d) { return xScale(d.year); })
+                .y(function(d) { return yScaleExp(d.expenditure); });
+
+            //Draw the life expectancy line
+            svg.append("path")
+                .datum(lifeSeries)
+                .attr("fill", "none")
+                .attr("stroke", "steelblue")
+                .attr("stroke-width", 2)
+                .attr("d", lifeLine);
+
+            //Draw the expenditure line
+            svg.append("path")
+                .datum(expSeries)
+                .attr("fill", "none")
+                .attr("stroke", "firebrick")
+                .attr("stroke-width", 2)
+                .attr("d", expLine);
+
+            //Bottom x-axis (years) — plain numbers, no comma formatting
+            var xAxis = d3.axisBottom(xScale)
+                .tickFormat(function(d) {
+                    return d;
+                });
+
+            svg.append("g")
+                .attr("transform", "translate(0," + (h - padding) + ")")
+                .call(xAxis);
+
+            //Left y-axis (life expectancy)
+            var yAxisLife = d3.axisLeft(yScaleLife);
+
+            svg.append("g")
+                .attr("transform", "translate(" + padding + ",0)")
+                .call(yAxisLife);
+
+            //Right y-axis (expenditure)
+            var yAxisExp = d3.axisRight(yScaleExp)
+                .tickFormat(function(d) {
+                    return formatMoney(d);
+                });
+
+            svg.append("g")
+                .attr("transform", "translate(" + (w - padding) + ",0)")
+                .call(yAxisExp);
+
+            //Axis titles
+            svg.append("text")
+                .attr("x", padding)
+                .attr("y", padding - 20)
+                .attr("font-size", "12px")
+                .attr("fill", "steelblue")
+                .text("Life expectancy");
+
+            svg.append("text")
+                .attr("x", w - padding - 110)
+                .attr("y", padding - 20)
+                .attr("font-size", "12px")
+                .attr("fill", "firebrick")
+                .text("Health expenditure");
+
+            //Chart title
+            svg.append("text")
+                .attr("x", w / 2)
+                .attr("y", 20)
+                .attr("text-anchor", "middle")
+                .attr("font-weight", "bold")
+                .text(country);
+        }
+
+    });
 
 });
