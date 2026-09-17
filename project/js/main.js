@@ -1,6 +1,6 @@
 //Load the health expenditure data first
 //Convert year and expenditure to numbers as each row comes in
-d3.csv("health_expenditure.csv", function(d) {
+d3.csv("data\health_expenditure.csv", function(d) {
     return {
         country: d.country,
         year: +d.year,
@@ -10,7 +10,7 @@ d3.csv("health_expenditure.csv", function(d) {
 
     //Now load the life expectancy data
     //Convert year and life expectancy to numbers as each row comes in
-    d3.csv("life_expectancy.csv", function(d) {
+    d3.csv("data\life_expectancy.csv", function(d) {
         return {
             country: d.country,
             year: +d.year,
