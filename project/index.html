@@ -2,60 +2,109 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <!-- Makes the page scale properly on phones and tablets -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <!-- Text shown in the browser tab -->
     <title>OECD Health & Spending Explorer</title>
 
+    <!-- Our own stylesheet -->
     <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts: preconnect speeds up loading, then load Inter (body text) and Source Serif 4 (headings) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
 
+    <!-- D3.js version 7 library, used to draw the charts -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 
 <body>
 
+    <!-- ===== HEADER: site title and the main question ===== -->
 <header>
     <h1>OECD Health & Spending Explorer</h1>
     <p>How does health expenditure relate to life expectancy?</p>
 </header>
 
+<!-- ===== MAIN PAGE ===== -->
 <main>
 
-    <section class="controls">
+    <!-- Introduction card: explains the topic and the PPP unit -->
+    <section class="info-card">
 
-        <label for="year-select">
-            Year:
-        </label>
+        <h2>Why this matters</h2>
 
-        <select id="year-select"></select>
+        <p class="description">
+            Every year governments and households across the OECD spend billions of dollars on
+            hospitals, doctors, medicines and prevention. A common assumption is that the more a
+            country spends, the healthier its people will be. This website lets you test that idea
+            by comparing health expenditure per person with 
+            life expectancy at birth for 19 OECD countries.
+        </p>
 
-        <label for="country-select">
-            Country:
-        </label>
-
-        <select id="country-select">
-            <option value="All">All countries</option>
-        </select>
+        <p class="description">
+            Spending is shown in <strong>US dollars at purchasing power parity (USD PPP)</strong>.
+            PPP adjusts for differences in prices between countries, so $1 buys roughly the same
+            amount of health care everywhere. This makes it fair to compare a country like Mexico
+            with a country like Switzerland.
+        </p>
 
     </section>
 
+    <!-- Filter controls: the dropdown options are filled in by main.js -->
+    <section class="controls">
+
+        <!-- Year filter (options added by D3 from the data) -->
+        <div class="control">
+            <label for="year-select">Year</label>
+            <select id="year-select"></select>
+        </div>
+
+        <!-- Country filter ("All countries" is the default, other countries added by D3) -->
+        <div class="control">
+            <label for="country-select">Country</label>
+            <select id="country-select">
+                <option value="All">All countries</option>
+            </select>
+        </div>
+
+    </section>
+
+    <!-- Dashboard: scatterplot on the left, info card on the right (grid layout in CSS) -->
     <section class="dashboard">
 
+        <!-- Scatterplot card -->
         <div class="chart-card">
 
             <h2>Health Expenditure vs Life Expectancy</h2>
 
+            <!-- Short instructions for the user -->
+            <p class="subtitle">Each circle is a country. <strong>Hover</strong> for details, <strong>click</strong> to select a country.</p>
+
+            <!-- Empty container: main.js appends the scatterplot SVG here -->
             <div id="scatterplot"></div>
+
+            <!-- Key takeaway shown under the chart -->
+            <p class="chart-note">
+                Most countries sit in the top middle of the chart: life expectancy rises quickly up
+                to about $5,000 per person and then levels off. The United States stands out far to
+                the right because it spends much more without living longer.
+            </p>
 
         </div>
 
+        <!-- Info card: shows details for the selected country -->
         <div class="info-card">
 
             <h2>Selected Country</h2>
 
+            <!-- Country name, updated by main.js when a country is selected -->
             <h3 id="country-name">
                 Select a country
             </h3>
 
+            <!-- Each <span> is filled in by main.js; "—" shows until a country is chosen -->
             <p>
                 Life expectancy:
                 <span id="life-value">—</span>
@@ -66,26 +115,73 @@
                 <span id="spending-value">—</span>
             </p>
 
+            <p>
+                Population:
+                <span id="population-value">—</span>
+            </p>
+
         </div>
 
     </section>
 
+    <!-- Line chart card: shows the selected country's trend over time -->
     <section class="chart-card">
 
         <h2>Change Over Time</h2>
 
+        <!-- Empty container: main.js draws the line chart (or a message) here -->
         <div id="linechart"></div>
 
     </section>
 
 </main>
 
+<!-- Tooltip box: hidden by default, shown and moved by main.js on hover -->
 <div id="tooltip"></div>
 
+<!-- ===== FOOTER: references and credits ===== -->
 <footer>
-    <p>Source: OECD Health Statistics</p>
+    <h2>References</h2>
+
+    <!-- Data sources and learning resources used -->
+    <ul class="references">
+        <li>
+            OECD (2026) <em>Health expenditure and financing: per capita, current prices, USD PPP</em>,
+            OECD Data Explorer, viewed August 2026,
+            <a href="https://data-explorer.oecd.org/">https://data-explorer.oecd.org/</a>.
+        </li>
+        <li>
+            OECD (2026) <em>Health status: life expectancy at birth</em>, OECD Data Explorer,
+            viewed August 2026,
+            <a href="https://data-explorer.oecd.org/">https://data-explorer.oecd.org/</a>.
+        </li>
+        <li>
+            OECD (2026) <em>Population</em>, OECD Data Explorer, viewed August 2026,
+            <a href="https://data-explorer.oecd.org/">https://data-explorer.oecd.org/</a>.
+        </li>
+        <li>
+            Bostock, M. (2023) <em>D3.js version 7</em>, viewed September 2026,
+            <a href="https://d3js.org/">https://d3js.org/</a>.
+        </li>
+        <li>
+            Murray, S. (2017) <em>Interactive Data Visualization for the Web</em>, 2nd edn,
+            O'Reilly Media. (Used for the enter / exit / merge update pattern and transitions.)
+        </li>
+        <li>
+            W3Schools (2026) <em>HTML Tutorial</em>, viewed September 2026,
+            <a href="https://www.w3schools.com/html/default.asp">https://www.w3schools.com/html/default.asp</a>.
+        </li>
+    </ul>
+
+    <!-- Bottom row: assignment name on the left, authors on the right (flex layout in CSS) -->
+    <div class="footer-bottom">
+        <p class="footer-credit">COS30045 Data Visualisation &middot; Assignment 3C</p>
+        <p class="footer-names">Created by Nikki Ing & Andreana Panagiotidis</p>
+    </div>
+
 </footer>
 
+<!-- Our D3 code. Loaded last so all the HTML elements above already exist -->
 <script src="js/main.js"></script>
 
 </body>
