@@ -5,13 +5,13 @@ Australia,2002,79.9
 Australia,2003,80.2
 Australia,2004,80.5
 Australia,2005,80.8
-Australia,2006,81.0
+Australia,2006,81
 Australia,2007,81.3
 Australia,2008,81.4
 Australia,2009,81.5
 Australia,2010,81.7
 Australia,2011,81.9
-Australia,2012,82.0
+Australia,2012,82
 Australia,2013,82.1
 Australia,2014,82.3
 Australia,2015,82.4
@@ -22,8 +22,8 @@ Australia,2019,82.9
 Australia,2020,83.2
 Australia,2021,83.3
 Australia,2022,83.2
-Australia,2023,83.0
-Australia,2024,83.0
+Australia,2023,83
+Australia,2024,83
 Austria,2000,78.3
 Austria,2001,78.8
 Austria,2002,78.9
@@ -65,7 +65,7 @@ Canada,2012,81.8
 Canada,2013,81.8
 Canada,2014,81.9
 Canada,2015,81.9
-Canada,2016,82.0
+Canada,2016,82
 Canada,2017,81.9
 Canada,2018,81.9
 Canada,2019,82.2
@@ -78,7 +78,7 @@ Finland,2000,77.8
 Finland,2001,78.2
 Finland,2002,78.3
 Finland,2003,78.6
-Finland,2004,79.0
+Finland,2004,79
 Finland,2005,79.1
 Finland,2006,79.5
 Finland,2007,79.6
@@ -123,7 +123,7 @@ France,2020,82.2
 France,2021,82.2
 France,2022,82.2
 France,2023,82.9
-France,2024,83.0
+France,2024,83
 Germany,2000,78.3
 Germany,2001,78.6
 Germany,2002,78.6
@@ -141,10 +141,10 @@ Germany,2013,80.6
 Germany,2014,80.9
 Germany,2015,80.6
 Germany,2016,80.9
-Germany,2017,81.0
+Germany,2017,81
 Germany,2018,80.9
 Germany,2019,81.2
-Germany,2020,81.0
+Germany,2020,81
 Germany,2021,80.7
 Germany,2022,80.5
 Germany,2023,80.9
@@ -163,10 +163,10 @@ Greece,2010,80.6
 Greece,2011,80.8
 Greece,2012,80.7
 Greece,2013,81.4
-Greece,2014,81.0
+Greece,2014,81
 Greece,2015,80.8
-Greece,2016,81.0
-Greece,2017,81.0
+Greece,2016,81
+Greece,2017,81
 Greece,2018,81.5
 Greece,2019,81.4
 Greece,2020,81.1
@@ -178,8 +178,8 @@ Hungary,2000,71.9
 Hungary,2001,72.5
 Hungary,2002,72.6
 Hungary,2003,72.6
-Hungary,2004,73.0
-Hungary,2005,73.0
+Hungary,2004,73
+Hungary,2005,73
 Hungary,2006,73.5
 Hungary,2007,73.6
 Hungary,2008,74.2
@@ -192,7 +192,7 @@ Hungary,2014,75.8
 Hungary,2015,75.6
 Hungary,2016,76.1
 Hungary,2017,75.9
-Hungary,2018,76.0
+Hungary,2018,76
 Hungary,2019,76.3
 Hungary,2020,75.5
 Hungary,2021,74.1
@@ -215,7 +215,7 @@ Italy,2012,82.4
 Italy,2013,82.9
 Italy,2014,82.8
 Italy,2015,82.4
-Italy,2016,83.0
+Italy,2016,83
 Italy,2017,82.8
 Italy,2018,83.1
 Italy,2019,83.4
@@ -229,11 +229,11 @@ Japan,2001,81.5
 Japan,2002,81.8
 Japan,2003,81.8
 Japan,2004,82.1
-Japan,2005,82.0
+Japan,2005,82
 Japan,2006,82.4
 Japan,2007,82.6
 Japan,2008,82.7
-Japan,2009,83.0
+Japan,2009,83
 Japan,2010,82.9
 Japan,2011,82.7
 Japan,2012,83.2
@@ -250,7 +250,7 @@ Japan,2022,84.1
 Japan,2023,84.1
 Japan,2024,84.1
 Mexico,2000,74.7
-Mexico,2001,75.0
+Mexico,2001,75
 Mexico,2002,75.1
 Mexico,2003,75.1
 Mexico,2004,75.4
@@ -274,18 +274,17 @@ Mexico,2021,68.8
 Mexico,2022,75.2
 Mexico,2023,75.3
 Mexico,2024,75.5
-Mexico,2025,75.7
 Netherlands,2000,78.2
 Netherlands,2001,78.4
 Netherlands,2002,78.5
 Netherlands,2003,78.7
 Netherlands,2004,79.3
 Netherlands,2005,79.6
-Netherlands,2006,80.0
+Netherlands,2006,80
 Netherlands,2007,80.4
 Netherlands,2008,80.5
 Netherlands,2009,80.9
-Netherlands,2010,81.0
+Netherlands,2010,81
 Netherlands,2011,81.3
 Netherlands,2012,81.2
 Netherlands,2013,81.4
@@ -302,7 +301,7 @@ Netherlands,2023,81.8
 Netherlands,2024,81.9
 New Zealand,2000,78.4
 New Zealand,2001,78.7
-New Zealand,2002,79.0
+New Zealand,2002,79
 New Zealand,2003,79.3
 New Zealand,2004,79.6
 New Zealand,2005,79.8
@@ -311,7 +310,7 @@ New Zealand,2007,80.3
 New Zealand,2008,80.5
 New Zealand,2009,80.7
 New Zealand,2010,80.8
-New Zealand,2011,81.0
+New Zealand,2011,81
 New Zealand,2012,81.2
 New Zealand,2013,81.4
 New Zealand,2014,81.4
@@ -326,15 +325,15 @@ New Zealand,2022,81.8
 New Zealand,2023,81.8
 New Zealand,2024,82.1
 Norway,2000,78.8
-Norway,2001,79.0
-Norway,2002,79.0
+Norway,2001,79
+Norway,2002,79
 Norway,2003,79.6
 Norway,2004,80.1
 Norway,2005,80.3
 Norway,2006,80.6
 Norway,2007,80.6
 Norway,2008,80.8
-Norway,2009,81.0
+Norway,2009,81
 Norway,2010,81.2
 Norway,2011,81.4
 Norway,2012,81.5
@@ -344,11 +343,11 @@ Norway,2015,82.3
 Norway,2016,82.4
 Norway,2017,82.6
 Norway,2018,82.8
-Norway,2019,83.0
+Norway,2019,83
 Norway,2020,83.2
 Norway,2021,83.2
 Norway,2022,82.6
-Norway,2023,83.0
+Norway,2023,83
 Norway,2024,83.2
 Spain,2000,79.3
 Spain,2001,79.8
@@ -367,28 +366,28 @@ Spain,2013,83.2
 Spain,2014,82.9
 Spain,2015,82.7
 Spain,2016,83.1
-Spain,2017,83.0
+Spain,2017,83
 Spain,2018,83.1
 Spain,2019,83.5
 Spain,2020,82.3
-Spain,2021,83.0
+Spain,2021,83
 Spain,2022,83.1
 Spain,2023,83.8
-Spain,2024,84.0
+Spain,2024,84
 Sweden,2000,79.8
 Sweden,2001,79.9
-Sweden,2002,80.0
+Sweden,2002,80
 Sweden,2003,80.3
 Sweden,2004,80.7
 Sweden,2005,80.7
-Sweden,2006,81.0
+Sweden,2006,81
 Sweden,2007,81.1
 Sweden,2008,81.3
 Sweden,2009,81.5
 Sweden,2010,81.6
 Sweden,2011,81.9
 Sweden,2012,81.8
-Sweden,2013,82.0
+Sweden,2013,82
 Sweden,2014,82.2
 Sweden,2015,82.2
 Sweden,2016,82.3
@@ -396,18 +395,18 @@ Sweden,2017,82.4
 Sweden,2018,82.5
 Sweden,2019,83.1
 Sweden,2020,82.4
-Sweden,2021,83.0
-Sweden,2022,83.0
+Sweden,2021,83
+Sweden,2022,83
 Sweden,2023,83.2
 Sweden,2024,83.8
-Switzerland,2000,80.0
+Switzerland,2000,80
 Switzerland,2001,80.5
 Switzerland,2002,80.6
 Switzerland,2003,80.7
 Switzerland,2004,81.3
 Switzerland,2005,81.5
 Switzerland,2006,81.8
-Switzerland,2007,82.0
+Switzerland,2007,82
 Switzerland,2008,82.3
 Switzerland,2009,82.3
 Switzerland,2010,82.7
@@ -426,11 +425,11 @@ Switzerland,2022,83.5
 Switzerland,2023,84.1
 Switzerland,2024,84.2
 United Kingdom,2000,77.8
-United Kingdom,2001,78.0
+United Kingdom,2001,78
 United Kingdom,2002,78.2
 United Kingdom,2003,78.3
 United Kingdom,2004,78.8
-United Kingdom,2005,79.0
+United Kingdom,2005,79
 United Kingdom,2006,79.3
 United Kingdom,2007,79.5
 United Kingdom,2008,79.6
@@ -441,18 +440,18 @@ United Kingdom,2012,80.8
 United Kingdom,2013,80.9
 United Kingdom,2014,81.1
 United Kingdom,2015,80.8
-United Kingdom,2016,81.0
+United Kingdom,2016,81
 United Kingdom,2017,81.1
-United Kingdom,2018,81.0
+United Kingdom,2018,81
 United Kingdom,2019,81.3
 United Kingdom,2020,80.3
 United Kingdom,2021,80.5
 United Kingdom,2022,80.9
-United Kingdom,2023,81.0
+United Kingdom,2023,81
 United Kingdom,2024,81.3
 United States,2000,76.8
-United States,2001,77.0
-United States,2002,77.0
+United States,2001,77
+United States,2002,77
 United States,2003,77.2
 United States,2004,77.6
 United States,2005,77.6
@@ -470,8 +469,8 @@ United States,2016,78.7
 United States,2017,78.6
 United States,2018,78.7
 United States,2019,78.8
-United States,2020,77.0
+United States,2020,77
 United States,2021,76.4
 United States,2022,77.5
 United States,2023,78.4
-United States,2024,79.0
+United States,2024,79
