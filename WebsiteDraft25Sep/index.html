@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>OECD Health & Spending Explorer</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+
+<body>
+
+<header>
+    <h1>OECD Health & Spending Explorer</h1>
+    <p>How does health expenditure relate to life expectancy?</p>
+</header>
+
+<main>
+
+    <section class="controls">
+
+        <label for="year-select">
+            Year:
+        </label>
+
+        <select id="year-select"></select>
+
+        <label for="country-select">
+            Country:
+        </label>
+
+        <select id="country-select">
+            <option value="All">All countries</option>
+        </select>
+
+    </section>
+
+    <section class="dashboard">
+
+        <div class="chart-card">
+
+            <h2>Health Expenditure vs Life Expectancy</h2>
+
+            <div id="scatterplot"></div>
+
+        </div>
+
+        <div class="info-card">
+
+            <h2>Selected Country</h2>
+
+            <h3 id="country-name">
+                Select a country
+            </h3>
+
+            <p>
+                Life expectancy:
+                <span id="life-value">—</span>
+            </p>
+
+            <p>
+                Health expenditure:
+                <span id="spending-value">—</span>
+            </p>
+
+        </div>
+
+    </section>
+
+    <section class="chart-card">
+
+        <h2>Change Over Time</h2>
+
+        <div id="linechart"></div>
+
+    </section>
+
+</main>
+
+<div id="tooltip"></div>
+
+<footer>
+    <p>Source: OECD Health Statistics</p>
+</footer>
+
+<script src="js/main.js"></script>
+
+</body>
+</html>
