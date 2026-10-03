@@ -19,7 +19,6 @@ h1, h2, h3 {
 header {
     padding: 30px;
     background: #1d3557;
-    border-bottom: 1px solid #ddd;
 }
 
 /* Site title: white text, moved in from the left edge */
@@ -44,12 +43,6 @@ main {
     max-width: 1200px;
     margin: auto;
     padding: 30px;
-}
-
-/* Paragraphs in the "Why this matters" introduction */
-.description {
-    font-family: "Inter", Arial, sans-serif;
-    font-size: 16px;
 }
 
 /* Small italic instruction line under the scatterplot heading */
@@ -80,7 +73,6 @@ main {
 
 /* Filter labels: bold, and display: block puts them above the dropdowns */
 .control label {
-    margin-right: 8px;
     margin-bottom: 10px;
     font-weight: bold;
     display: block;
@@ -93,7 +85,6 @@ main {
     min-width: 160px;
     border: 1px solid #ccc;
     border-radius: 6px;
-    background: white;
     cursor: pointer;       /* Shows a hand cursor on hover */   
 }
 
@@ -141,11 +132,6 @@ svg text {
     border-left: 4px solid #2a9d8f;
     padding: 10px 14px;
     margin-bottom: 0;
-}
-
-/* Axis titles (e.g. "Life Expectancy") */
-.axis-label {
-    font-size: 14px;
 }
 
 /* Light grey grid lines behind the data */
