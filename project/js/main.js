@@ -11,7 +11,7 @@
 //
 //  3. Set up the controls
 //
-//  4. Scatterplot 
+//  4. Scatterplot setup 
 //
 //  5. Event listeners
 //
@@ -231,9 +231,7 @@ d3.csv("data/health_expenditure.csv", function(d) {
             var lifeMax = d3.max(withPopulation, function(d) { return d.life; });
 
             //x scale: spending per person -> horizontal
-            //Per-person spending only ranges from about $500 to $16,000 -
-            //much narrower than total spending did - so a plain linear
-            //scale works fine
+            //Per-person spending only ranges from about $500 to $16,000
             var xScale = d3.scaleLinear()
                 .domain([perCapitaMin, perCapitaMax])
                 .range([padding, w - padding])
@@ -350,6 +348,7 @@ d3.csv("data/health_expenditure.csv", function(d) {
                     d3.select("#country-name").text("Select a country");
                     d3.select("#life-value").text("—");
                     d3.select("#spending-value").text("—");
+                    d3.select("#spending-value-pp").text("—");
                     d3.select("#population-value").text("—");
                     d3.select("#linechart").html("<p>Select a country above to see its trend over time.</p>");
                 }
@@ -363,16 +362,16 @@ d3.csv("data/health_expenditure.csv", function(d) {
             }
 
             //Update the info card on the right of the scatterplot
-            //Shows life expectancy, total health expenditure and population
+            //Shows life expectancy, total health expenditure, spend per person and population
             //for the chosen country in the chosen year
             function updateInfoCard(country, year) {
 
-                //Find this country's row for this year in the merged data
+                //Find this country's row for this year in the withPopulation var
                 var record = null;
 
-                for (var i = 0; i < merged.length; i++) {
-                    if (merged[i].country === country && merged[i].year === year) {
-                        record = merged[i];
+                for (var i = 0; i < withPopulation.length; i++) {
+                    if (withPopulation[i].country === country && withPopulation[i].year === year) {
+                        record = withPopulation[i];
                         break;
                     }
                 }
@@ -382,11 +381,13 @@ d3.csv("data/health_expenditure.csv", function(d) {
                 if (record) {
                     d3.select("#life-value").text(record.life + " years");
                     d3.select("#spending-value").text(formatMoney(record.expenditure));
+                    d3.select("#spending-value-pp").text(formatPerCapita(record.perCapita));
                 }
                 else {
                     //No matching row - say so instead of showing old values
                     d3.select("#life-value").text("No data for " + year);
                     d3.select("#spending-value").text("No data for " + year);
+                    d3.select("#spending-value-pp").text("No data for " + year);
                 }
 
                 //Population comes straight from popData, so it still shows
@@ -437,29 +438,13 @@ d3.csv("data/health_expenditure.csv", function(d) {
             //Turns a per-person dollar amount into a readable string
             //e.g. 4808.3 -> "$4,808"
             function formatPerCapita(usd) {
-
-                var rounded = Math.round(usd);
-                var text = "" + rounded;  //number -> text so we can read each digit
-
-                //Insert a comma every three digits, working from the right
-                var withCommas = "";
-                var count = 0;
-
-                for (var i = text.length - 1; i >= 0; i--) {
-                    withCommas = text.charAt(i) + withCommas;
-                    count = count + 1;
-                    if (count % 3 === 0 && i !== 0) {
-                        withCommas = "," + withCommas;
-                    }
-                }
-
-                return "$" + withCommas;
+                return d3.format("$,.0f")(usd);
             }
 
             //Turns a population headcount into a readable string
-            //e.g. 25700000 -> "25.7M"
+            //e.g. 25700000 -> "25.7 million"
             function formatPopulation(people) {
-                return (people / 1000000).toFixed(1) + "M";
+                return (people / 1000000).toFixed(1) + " million";
             }
 
             //-------------------------------------------------
@@ -533,7 +518,7 @@ d3.csv("data/health_expenditure.csv", function(d) {
                                 "<strong>" + d.country + "</strong><br>" +
                                 "Life expectancy: " + d.life + " years<br>" +
                                 "Spend per person: " + formatPerCapita(d.perCapita) + "<br>" +
-                                "Population: " + (d.population / 1000000).toFixed(1) + " million"
+                                "Population: " + formatPopulation(d.population)
                             );
                     })
 
@@ -661,15 +646,13 @@ d3.csv("data/health_expenditure.csv", function(d) {
                 var lifeMax = d3.max(lifeSeries, function(d) { return d.life; });
 
                 //Left y scale: life expectancy
-                //Start the life expectancy axis at 0, same as the expenditure
-                //axis below, so both lines are honestly comparable
                 var yScaleLife = d3.scaleLinear()
-                    .domain([0, lifeMax])
+                    .domain([lifeMin - 1, lifeMax + 1])
                     .range([h - padding, padding]);
 
                 var expMax = d3.max(expSeries, function(d) { return d.perCapita; });
 
-                //Right y scale: total health expenditure (millions of USD)
+                //Right y scale: health expenditure per person
                 //Two separate y scales are needed because the two measures 
                 //use completely different units (years vs dollars)
                 var yScaleExp = d3.scaleLinear()
